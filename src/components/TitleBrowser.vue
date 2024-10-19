@@ -9,8 +9,8 @@ const { titles, selectedTitle } = storeToRefs(useTitleStore())
 
 </script>
 <template>
-  <div class="grid grid-cols-3 w-full bg-white rounded-lg h-[95vh] overflow-hidden">
-    <TitleBrowserHeader class="col-span-3" />
+  <div class="grid grid-cols-3 w-full bg-white rounded-lg h-[95vh] overflow-hidden grid-rows-[min-content_auto]">
+    <TitleBrowserHeader class="col-span-3 row-span-0" />
     <TitleList class="col-span-1" :titles="titles" />
     <div class="col-span-2" v-if="selectedTitle">
       <TitleDetails v-if="selectedTitle" :title="selectedTitle" />

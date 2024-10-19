@@ -82,16 +82,52 @@ export const useTitleStore = defineStore('title', () => {
           "Poster": "https://m.media-amazon.com/images/M/MV5BMjE5NDQ5OTE4Ml5BMl5BanBnXkFtZTcwOTE3NDIzMw@@._V1_SX300.jpg"
         }
       ],
-      "totalResults": "3429",
+      "totalResults": "4648",
       "Response": "True"
     }
     titles.value = result.Search
+    pagination.value.total = 4648
+    pagination.value.currentPage = 1
+    pagination.value.currentFilters = {
+      "search": "Star",
+      "type": "any"
+    }
   }
+
+  const pagination = ref({
+    currentPage: 1,
+    total: 1,
+    perPage: 10, // we could compute this, as it may change in the future
+    currentFilters: {}
+  })
+
+  const hasFinishedPagination = computed(() => {
+    return (pagination.value.currentPage * pagination.value.perPage) > pagination.value.total;
+  })
 
   async function search(filters: any) {
     const result = await fetch(`https://www.omdbapi.com/?apikey={apiKeyHere}&s=${filters.search}&t=${filters.type}`)
+    if (filters.page) {
+      pagination.value.currentPage = filters.page
+    }
     const json = await result.json()
+    pagination.value.total = json.totalResults
+    pagination.value.currentPage = 1
+    pagination.value.currentFilters = filters
     titles.value = json.Search
+  }
+
+  const loadingNextPage = ref(false)
+  async function loadNextPage() {
+    if (loadingNextPage.value) {
+      return
+    }
+    loadingNextPage.value = true
+    const result = await fetch(`https://www.omdbapi.com/?apikey={apiKeyHere}&s=${pagination.value.currentFilters.search}&t=${pagination.value.currentFilters.type}&page=${++pagination.value.currentPage}`)
+    const json = await result.json()
+    pagination.value.total = json.totalResults
+    titles.value.push(...json.Search)
+    loadingNextPage.value = false
   }
 
   async function fetchTitleById(id: string, fallbackData: Title|null = null) {
@@ -103,5 +139,5 @@ export const useTitleStore = defineStore('title', () => {
     selectedTitle.value = json
   }
 
-  return { selectedTitle, titles, init, search, fetchTitleById }
+  return { selectedTitle, pagination, hasFinishedPagination, titles, init, search, loadNextPage, fetchTitleById }
 })
