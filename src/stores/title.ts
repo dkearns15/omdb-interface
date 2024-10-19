@@ -8,7 +8,7 @@ export const useTitleStore = defineStore('title', () => {
 
   const titles = ref<Array<Title>>([])
 
-  function search() {
+  function init() {
     const result = {
       "Search": [
         {
@@ -88,12 +88,20 @@ export const useTitleStore = defineStore('title', () => {
     titles.value = result.Search
   }
 
+  async function search(filters: any) {
+    const result = await fetch(`https://www.omdbapi.com/?apikey={apiKeyHere}&s=${filters.search}&t=${filters.type}`)
+    const json = await result.json()
+    titles.value = json.Search
+  }
+
   async function fetchTitleById(id: string, fallbackData: Title|null = null) {
     if (fallbackData) {
       selectedTitle.value = fallbackData
     }
-    selectedTitle.value = await useFetch("https://www.omdbapi.com/?apikey={apiKeyHere}&i=" + id).data
+    const result = await fetch("https://www.omdbapi.com/?apikey={apiKeyHere}&i=" + id)
+    const json = await result.json()
+    selectedTitle.value = json
   }
 
-  return { selectedTitle, titles, search, fetchTitleById }
+  return { selectedTitle, titles, init, search, fetchTitleById }
 })

@@ -6,11 +6,6 @@ import TitleList from "@/components/TitleList.vue";
 import {storeToRefs} from "pinia";
 import TitleBrowserHeader from "@/components/TitleBrowserHeader.vue";
 const { titles, selectedTitle } = storeToRefs(useTitleStore())
-const { search } = useTitleStore()
-
-onMounted(() => {
-  search()
-})
 
 </script>
 <template>
@@ -18,7 +13,7 @@ onMounted(() => {
     <TitleBrowserHeader class="col-span-3" />
     <TitleList class="col-span-1" :titles="titles" />
     <div class="col-span-2" v-if="selectedTitle">
-      <TitleDetails v-if="selectedTitle && selectedTitle.value" :title="selectedTitle.value" />
+      <TitleDetails v-if="selectedTitle" :title="selectedTitle" />
     </div>
     <div class="col-span-2 flex flex-col justify-center items-center" v-else>
       <div class="max-w-80 text-center">
