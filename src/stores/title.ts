@@ -3,6 +3,8 @@ import { defineStore } from 'pinia'
 import type Title from "@/types/title";
 
 export const useTitleStore = defineStore('title', () => {
+  const baseUrl = `https://www.omdbapi.com/?apikey=${import.meta.env.VITE_OMDB_API_KEY}`
+
   const selectedTitle = ref<Title|null>(null)
 
   const searching = ref(false)
@@ -49,7 +51,7 @@ export const useTitleStore = defineStore('title', () => {
 
   async function search(filters: any) {
     searching.value = true
-    const result = await fetch(`https://www.omdbapi.com/?apikey={apiKeyHere}&s=${filters.search}&type=${filters.type}`)
+    const result = await fetch(`${baseUrl}&s=${filters.search}&type=${filters.type}`)
     if (filters.page) {
       pagination.value.currentPage = filters.page
     }
@@ -77,7 +79,7 @@ export const useTitleStore = defineStore('title', () => {
       return
     }
     loadingNextPage.value = true
-    const result = await fetch(`https://www.omdbapi.com/?apikey={apiKeyHere}&s=${pagination.value.currentFilters.search}&type=${pagination.value.currentFilters.type}&page=${++pagination.value.currentPage}`)
+    const result = await fetch(`${baseUrl}&s=${pagination.value.currentFilters.search}&type=${pagination.value.currentFilters.type}&page=${++pagination.value.currentPage}`)
     const json = await result.json()
     pagination.value.total = json.totalResults
     titles.value.push(...json.Search.map(element => {
@@ -98,7 +100,7 @@ export const useTitleStore = defineStore('title', () => {
     if (fallbackData) {
       selectedTitle.value = fallbackData
     }
-    const result = await fetch("https://www.omdbapi.com/?apikey={apiKeyHere}&i=" + id)
+    const result = await fetch(`${baseUrl}&i=${id}`)
     const json = await result.json()
     selectedTitle.value = json
   }
