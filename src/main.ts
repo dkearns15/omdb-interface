@@ -1,6 +1,7 @@
 import './assets/main.css'
 import VueSlider from 'vue-slider-component'
 import 'vue-slider-component/theme/default.css'
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 
 
 import { createApp } from 'vue'
@@ -11,6 +12,8 @@ const app = createApp(App)
 
 app.component('VueSlider', VueSlider)
 
-app.use(createPinia())
+const pinia = createPinia()
+pinia.use(piniaPluginPersistedstate)
+app.use(pinia)
 
 app.mount('#app')

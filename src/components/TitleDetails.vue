@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { defineProps } from 'vue';
 import Title from "@/types/title";
+import {useWatchlistStore} from "@/stores/watchlist";
+import {storeToRefs} from "pinia";
+const { titleIsInWatchlist } = storeToRefs(useWatchlistStore())
+const { addToWatchlist, removeFromWatchlist } = useWatchlistStore()
 
 const { title } = defineProps<{ title: Title }>()
 </script>
@@ -14,7 +18,18 @@ const { title } = defineProps<{ title: Title }>()
         </div>
         <div class="flex flex-col justify-between w-full pl-4">
           <div class="flex flex-row justify-end w-full">
-            <button>Watchlist</button>
+            <button
+              v-if="titleIsInWatchlist(title.imdbID)"
+              class="border border-black rounded-md px-2"
+              @click="() => { removeFromWatchlist(title.imdbID)}">
+              <div class="flex flex-row items-center">Watchlisted <img class="h-5 w-5" src="@/assets/checkmark.svg"></div>
+            </button>
+            <button
+              v-else
+              class="border border-black rounded-md px-2"
+              @click="() => { addToWatchlist(title.imdbID)}">
+              <div class="flex flex-row items-center">Watchlist <img class="h-5 w-5" src="@/assets/bookmark.svg"></div>
+            </button>
           </div>
           <div class="flex flex-col w-full">
             <h2 class="text-lg md:text-3xl font-bold mb-2">{{ title.Title }}</h2>
