@@ -6,7 +6,7 @@ import {useTitleStore} from "@/stores/title";
 import {storeToRefs} from "pinia";
 
 const { loadNextPage } = useTitleStore()
-const { pagination, hasFinishedPagination } = storeToRefs(useTitleStore())
+const { pagination, hasFinishedPagination, searching } = storeToRefs(useTitleStore())
 
 const { titles } = defineProps<{ titles: Array<Title> }>()
 
@@ -37,18 +37,23 @@ watch(titles.length, (oldValue, newValue) => {
 </script>
 
 <template>
-  <ul v-if="titles && titles.length > 0" class="divide-y divide-gray-300 overflow-y-scroll h-full flex flex-col justify-start"
-      @scroll="checkForLoadMore"
-      @resize="checkForLoadMore">
-    <li class="sticky top-0 bg-white px-4">
-      Showing 1 to {{ pagination.total < (pagination.perPage * pagination.currentPage) ? pagination.total : pagination.currentPage * pagination.perPage }} of {{ pagination.total }}
-    </li>
-    <TitleListItem v-for="title in titles" :key="title.imdbID" :title="title"/>
-    <li v-if="hasFinishedPagination" class="text-center px-4 bg-white pt-2">End of results</li>
-    <li v-else class="text-center px-4 bg-white pt-2"><span class="loader"></span></li>
-  </ul>
-  <div v-else class="flex flex-row justify-center items-center overflow-y-scroll">
-    No results
+  <div class="relative overflow-hidden h-full">
+    <ul v-if="titles && titles.length > 0" class="divide-y divide-gray-300 overflow-y-scroll h-full flex flex-col justify-start"
+        @scroll="checkForLoadMore"
+        @resize="checkForLoadMore">
+      <li class="sticky top-0 bg-white px-4">
+        Showing 1 to {{ pagination.total < (pagination.perPage * pagination.currentPage) ? pagination.total : pagination.currentPage * pagination.perPage }} of {{ pagination.total }}
+      </li>
+      <TitleListItem v-for="title in titles" :key="title.imdbID" :title="title"/>
+      <li v-if="hasFinishedPagination" class="text-center px-4 bg-white pt-2">End of results</li>
+      <li v-else class="text-center px-4 bg-white pt-2"><span class="loader"></span></li>
+    </ul>
+    <div v-else class="flex flex-row justify-center items-center overflow-y-scroll h-full w-full">
+      No results
+    </div>
+    <div v-if="searching" class="absolute h-full w-full bg-gray-600/75 z-10 left-0 top-0 flex justify-center items-center">
+      <span class="loader"></span>
+    </div>
   </div>
 </template>
 

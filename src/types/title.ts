@@ -1,7 +1,8 @@
 // shamelessly adapted from https://github.com/thblt-thlgn/omdb/tree/master/src/typing
 export default interface Title {
   Title: string;
-  Year: string;
+  StartYear: string;
+  EndYear: string;
   Rated?: RatingType;
   Released?: string;
   Runtime?: string;

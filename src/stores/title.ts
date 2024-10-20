@@ -5,6 +5,8 @@ import type Title from "@/types/title";
 export const useTitleStore = defineStore('title', () => {
   const selectedTitle = ref<Title|null>(null)
 
+  const searching = ref(false)
+
   const titles = ref<Array<Title>>([])
 
   const filteredTitles = computed(() => {
@@ -13,16 +15,16 @@ export const useTitleStore = defineStore('title', () => {
     }
     return titles.value
       .filter((title) => {
-        if (pagination.value.currentFilters.minYears) {
-          return title.Year >= pagination.value.currentFilters.minYears
+        if (!pagination.value.currentFilters.minYears) {
+          return true
         }
-        return true
+        return title.StartYear >= pagination.value.currentFilters.minYears
       })
       .filter((title) => {
-        if (pagination.value.currentFilters.maxYears) {
-          return title.Year <= pagination.value.currentFilters.maxYears
+        if (!pagination.value.currentFilters.maxYears) {
+          return true
         }
-        return true
+        return title.EndYear <= pagination.value.currentFilters.maxYears
       })
   })
 
@@ -46,6 +48,7 @@ export const useTitleStore = defineStore('title', () => {
   })
 
   async function search(filters: any) {
+    searching.value = true
     const result = await fetch(`https://www.omdbapi.com/?apikey={apiKeyHere}&s=${filters.search}&type=${filters.type}`)
     if (filters.page) {
       pagination.value.currentPage = filters.page
@@ -54,7 +57,18 @@ export const useTitleStore = defineStore('title', () => {
     pagination.value.total = json.totalResults
     pagination.value.currentPage = 1
     pagination.value.currentFilters = filters
-    titles.value = json.Search
+    titles.value = json.Search.map(element => {
+      if (element.Year.length === 4) {
+        element.StartYear = element.Year
+        element.EndYear = element.Year
+        return element
+      }
+      const years = element.Year.split('–')
+      element.StartYear = years[0]
+      element.EndYear = years.length > 1 ? years[1] : "3000" // handles ongoing series, sorry to the developer maintaining this in the year 3000
+      return element
+    })
+    searching.value = false
   }
 
   const loadingNextPage = ref(false)
@@ -79,5 +93,5 @@ export const useTitleStore = defineStore('title', () => {
     selectedTitle.value = json
   }
 
-  return { selectedTitle, pagination, hasFinishedPagination, titles, init, search, loadNextPage, fetchTitleById, filteredTitles }
+  return { selectedTitle, pagination, hasFinishedPagination, titles, init, search, loadNextPage, fetchTitleById, filteredTitles, searching }
 })
