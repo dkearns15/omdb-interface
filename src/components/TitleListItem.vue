@@ -14,7 +14,7 @@ const { title } = defineProps<{ title: Title }>()
     <img :src="title.Poster" class="h-16 w-16 min-w-16 min-h-16 object-cover rounded-lg mr-4" :alt="`${title.Title} poster`"/>
     <div class="flex flex-col">
       <span class="line-clamp-2 flex-shrink-0 text-ellipsis">{{ title.Title }}</span>
-      <span>{{ title.Year }}</span>
+      <span class="text-gray-700 text-sm">{{ title.Year }}</span>
     </div>
   </li>
 </template>

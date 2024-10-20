@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import {computed, onMounted, ref, watch} from "vue";
+import {computed, ref, watch} from "vue";
 import {useTitleStore} from "@/stores/title";
 import RadioInput from "@/components/inputs/RadioInput.vue";
 import {useIsMobile} from "@/utils/isMobile";
-const { search, init } = useTitleStore()
+const { search } = useTitleStore()
 
 const years = ref([1888, 2024])
 const type = ref(null)
@@ -30,21 +30,16 @@ function callSearch() {
 const debounce = (callback: Function, wait: number) => {
   let timeoutId: null|number = null;
   return (...args: any[]) => {
-    if (timeoutId === null) {
-      return
+    if (timeoutId !== null) {
+      window.clearTimeout(timeoutId);
     }
-    window.clearTimeout(timeoutId);
     timeoutId = window.setTimeout(() => {
       callback(...args);
     }, wait);
   };
 }
 
-watch(allFilters, debounce(callSearch, 300))
-
-onMounted(() => {
-  init()
-})
+watch(allFilters, debounce(callSearch, 300), { deep: true })
 
 // removed episodes as it was in design, but not in brief, and is not supported by OMDBapi
 const radioOptions = [
@@ -59,19 +54,24 @@ const { isMobile } = useIsMobile()
 
 <template>
   <div class="bg-gray-400 w-full h-24 flex flex-row rounded-t-lg justify-between px-4">
-    <div class="flex flex-row grow items-center">
-      <img src="@/assets/OMDB_Logo.png" class="my-4 mr-2 h-12 md:h-3/4" alt="OMDB Logo" />
-      <div class="flex flex-row grow items-center">
-        <label for="search" class="mr-2 cursor-pointer">
-          <img src="@/assets/search.svg" alt="Search icon"/>
-        </label>
-        <input
-          v-model="searchModel"
-          id="search"
-          type="text"
-          placeholder="Search for a movie"
-          class="bg-gray-400 px-2 grow border-b border-b-1 border-black h-12 text-lg placeholder-gray-600"
-        >
+    <div class="flex flex-row justify-between w-full">
+      <div class="flex flex-row justify-start items-center">
+        <img src="@/assets/OMDB_Logo.png" class="my-4 mr-2 h-6 sm:h-12 md:h-3/4" alt="OMDB Logo" />
+        <div class="flex flex-row items-center">
+          <label for="search" class="mr-2 cursor-pointer">
+            <img src="@/assets/search.svg" alt="Search icon"/>
+          </label>
+          <input
+            v-model="searchModel"
+            id="search"
+            type="text"
+            placeholder="Search"
+            class="bg-gray-400 px-2 border-b border-b-1 border-black h-12 text-lg placeholder-gray-600 max-w-40 sm:max-w-3xl"
+          >
+        </div>
+      </div>
+      <div class="flex flex-row justify-end items-center">
+        <button class="block lg:hidden w-10 h-10 flex-shrink-0" @click="toggleShowFilters"><img src="@/assets/filter.svg" class="h-6" alt="Filter icon"></button>
       </div>
     </div>
 
@@ -81,7 +81,7 @@ const { isMobile } = useIsMobile()
         <label for="year" class="font-semibold mt-2">Year</label>
         <div class="flex flex-row items-center w-48">
           <span>{{ years[0] }}</span>
-          <div class="w-48 flex-row items-center ml-2 mr-3">
+          <div class="w-48 flex-row items-center mx-3">
             <!-- apparently the first movie was made in 1888, I could fact check this beyond a quick google search, but... -->
 
             <vue-slider v-model="years"
@@ -105,9 +105,7 @@ const { isMobile } = useIsMobile()
 
     <div class="hidden lg:flex flex-row items-center flex-shrink-0" id="filter-header"/>
 
-    <button class="block lg:hidden" @click="toggleShowFilters"><img src="@/assets/filter.svg" class="h-6" alt="Filter icon"></button>
-
-    <div class="flex flex-col lg:hidden fixed top-0 h-screen w-[60vw] bg-gray-100 transition-all duration-500 z-40 p-10" :class="showFilters ? 'right-0' : '-right-[60vw]'">
+    <div class="flex flex-col lg:hidden fixed top-0 h-screen w-[70vw] bg-gray-100 transition-all duration-500 z-40 p-10" :class="showFilters ? 'right-0' : '-right-[70vw]'">
       <h2 class="text-2xl text-black font-bold">Filters</h2>
       <div id="filter-drawer"/>
     </div>

@@ -20,15 +20,15 @@ const { title } = defineProps<{ title: Title }>()
           <div class="flex flex-row justify-end w-full">
             <button
               v-if="titleIsInWatchlist(title.imdbID)"
-              class="border border-black rounded-md px-2"
+              class="border border-black rounded-md px-1 sm:px-2 flex-shrink-0"
               @click="() => { removeFromWatchlist(title.imdbID)}">
-              <div class="flex flex-row items-center">Watchlisted <img class="h-5 w-5" src="@/assets/checkmark.svg" alt="Checkmark icon"></div>
+              <div class="flex flex-row items-center text-sm sm:text-md">Watchlisted <img class="h-5 w-5" src="@/assets/checkmark.svg" alt="Checkmark icon"></div>
             </button>
             <button
               v-else
-              class="border border-black rounded-md px-2"
+              class="border border-black rounded-md px-1 sm:px-2 flex-shrink-0"
               @click="() => { addToWatchlist(title.imdbID)}">
-              <div class="flex flex-row items-center">Watchlist <img class="h-5 w-5" src="@/assets/bookmark.svg" alt="Bookmark icon"></div>
+              <div class="flex flex-row items-center text-sm sm:text-md">Watchlist <img class="h-5 w-5" src="@/assets/bookmark.svg" alt="Bookmark icon"></div>
             </button>
           </div>
           <div class="flex flex-col w-full">
@@ -49,7 +49,7 @@ const { title } = defineProps<{ title: Title }>()
       <div v-for="(rating, index) in title.Ratings" :key="index"
            class="flex flex-col justify-center items-center flex-grow basis-0 text-center">
         <span>{{ rating.Value }}</span>
-        <span>{{ rating.Source }}</span>
+        <span class="text-xs">{{ rating.Source }}</span>
       </div>
     </div>
   </div>

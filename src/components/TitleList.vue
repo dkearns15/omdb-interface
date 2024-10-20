@@ -23,7 +23,7 @@ const { titles } = defineProps<{ titles: Array<Title> }>()
       <li v-else class="text-center px-4 bg-white py-2"><button @click="loadNextPage" class="underline">Load more results</button></li>
     </ul>
     <div v-else class="flex flex-row justify-center items-center overflow-y-scroll h-full w-full">
-      No results
+      No results. Search above.
     </div>
     <div v-if="searching" class="absolute h-full w-full bg-gray-600/75 z-10 left-0 top-0 flex justify-center items-center">
       <span class="loader"></span>

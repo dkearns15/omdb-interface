@@ -1,6 +1,9 @@
-import { ref, computed } from 'vue'
-import { defineStore } from 'pinia'
+import {computed, ref} from 'vue'
+import {defineStore} from 'pinia'
 import type Title from "@/types/title";
+import type OmdbTitle from "@/types/OmdbTitle";
+
+type Filters = { search: string|null, type: string|null, page?: number, maxYears: number, minYears: number }
 
 export const useTitleStore = defineStore('title', () => {
   const baseUrl = `https://www.omdbapi.com/?apikey=${import.meta.env.VITE_OMDB_API_KEY}`
@@ -20,56 +23,58 @@ export const useTitleStore = defineStore('title', () => {
         if (!pagination.value.currentFilters.minYears) {
           return true
         }
-        return title.StartYear >= pagination.value.currentFilters.minYears
+        return Number(title.StartYear) >= pagination.value.currentFilters.minYears
       })
       .filter((title) => {
         if (!pagination.value.currentFilters.maxYears) {
           return true
         }
-        return title.EndYear <= pagination.value.currentFilters.maxYears
+        return Number(title.EndYear) <= pagination.value.currentFilters.maxYears
       })
   })
-
-  function init() {
-    pagination.value.currentPage = 1
-    pagination.value.currentFilters = {
-      "search": "Star",
-      "type": null
-    }
-  }
 
   const pagination = ref({
     currentPage: 1,
     total: 1,
     perPage: 10, // we could compute this, as it may change in the future
-    currentFilters: {}
+    currentFilters: {
+      search: null,
+      type: null,
+      page: 1,
+      maxYears: 2024,
+      minYears: 1888
+    } as Filters
   })
 
   const hasFinishedPagination = computed(() => {
     return (pagination.value.currentPage * pagination.value.perPage) > pagination.value.total;
   })
 
-  async function search(filters: any) {
+  function transformOmdbResponse(titles: Array<OmdbTitle>): Array<Title> {
+    return titles.map(element => {
+      if (element.Year.length === 4) {
+        return {...element, StartYear: element.Year, EndYear: element.Year}
+      }
+      const years = element.Year.split('–')
+      let startYear = years[0]
+      let endYear = years.length > 1 ? years[1] : "3000" // handles ongoing series, sorry to the developer maintaining this in the year 3000
+      return {...element, StartYear: startYear, EndYear: endYear}
+    })
+  }
+
+  async function search(filters: Filters) {
     searching.value = true
     const result = await fetch(`${baseUrl}&s=${filters.search}&type=${filters.type}`)
     if (filters.page) {
       pagination.value.currentPage = filters.page
     }
     const json = await result.json()
+
     pagination.value.total = json.totalResults
     pagination.value.currentPage = 1
     pagination.value.currentFilters = filters
-    titles.value = json.Search.map(element => {
-      if (element.Year.length === 4) {
-        element.StartYear = element.Year
-        element.EndYear = element.Year
-        return element
-      }
-      const years = element.Year.split('–')
-      element.StartYear = years[0]
-      element.EndYear = years.length > 1 ? years[1] : "3000" // handles ongoing series, sorry to the developer maintaining this in the year 3000
-      return element
-    })
+
+    titles.value = transformOmdbResponse(json.Search)
     searching.value = false
   }
 
@@ -79,20 +84,12 @@ export const useTitleStore = defineStore('title', () => {
       return
     }
     loadingNextPage.value = true
-    const result = await fetch(`${baseUrl}&s=${pagination.value.currentFilters.search}&type=${pagination.value.currentFilters.type}&page=${++pagination.value.currentPage}`)
+    ++pagination.value.currentPage
+    const result = await fetch(`${baseUrl}&s=${pagination.value.currentFilters.search}&type=${pagination.value.currentFilters.type}&page=${pagination.value.currentPage}`)
     const json = await result.json()
-    pagination.value.total = json.totalResults
-    titles.value.push(...json.Search.map(element => {
-      if (element.Year.length === 4) {
-        element.StartYear = element.Year
-        element.EndYear = element.Year
-        return element
-      }
-      const years = element.Year.split('–')
-      element.StartYear = years[0]
-      element.EndYear = years.length > 1 ? years[1] : "3000" // handles ongoing series, sorry to the developer maintaining this in the year 3000
-      return element
-    }))
+
+    titles.value.push(...transformOmdbResponse(json.Search))
+
     loadingNextPage.value = false
   }
 
@@ -101,9 +98,8 @@ export const useTitleStore = defineStore('title', () => {
       selectedTitle.value = fallbackData
     }
     const result = await fetch(`${baseUrl}&i=${id}`)
-    const json = await result.json()
-    selectedTitle.value = json
+    selectedTitle.value = await result.json()
   }
 
-  return { selectedTitle, pagination, hasFinishedPagination, titles, init, search, loadNextPage, fetchTitleById, filteredTitles, searching }
+  return { selectedTitle, pagination, hasFinishedPagination, titles, search, loadNextPage, fetchTitleById, filteredTitles, searching }
 })
