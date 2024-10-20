@@ -12,7 +12,7 @@ const model = defineModel()
 
 <template>
   <div class="flex flex-col">
-    <span>{{ label }}</span>
+    <span class="font-semibold mt-2">{{ label }}</span>
     <div class="flex" :class="direction === 'row' ? 'flex-row' : 'flex-col'">
       <div v-for="(option, index) in options" :key="index" :class="direction === 'row' ? 'first:ml-0 last:mr-0 mx-2' : ''">
         <input class="mr-1" type="radio" v-model="model" :value="option.value" :id="option.value">

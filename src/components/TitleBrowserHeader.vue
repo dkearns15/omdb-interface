@@ -2,6 +2,7 @@
 import {computed, onMounted, ref, watch} from "vue";
 import {useTitleStore} from "@/stores/title";
 import RadioInput from "@/components/inputs/RadioInput.vue";
+import {useIsMobile} from "@/utils/isMobile";
 const { search, init } = useTitleStore()
 
 const years = ref([1888, 2024])
@@ -50,6 +51,8 @@ const radioOptions = [
   { value: 'series', label: 'Series' },
 ]
 
+const { isMobile } = useIsMobile()
+
 </script>
 
 <template>
@@ -71,10 +74,9 @@ const radioOptions = [
     </div>
 
     <!--  filters    -->
-    <div class="hidden lg:flex flex-row items-center flex-shrink-0">
-      <!--   year slider     -->
-      <div class="flex flex-col mx-8">
-        <label for="year">Year</label>
+    <Teleport defer :to="isMobile ? '#filter-drawer' : '#filter-header'">
+      <div class="flex flex-col" :class="!isMobile ? 'mx-8' : ''">
+        <label for="year" class="font-semibold mt-2">Year</label>
         <div class="flex flex-row items-center w-48">
           <span>{{ years[0] }}</span>
           <div class="w-48 flex-row items-center ml-2 mr-3">
@@ -93,40 +95,22 @@ const radioOptions = [
         </div>
       </div>
       <RadioInput
-        direction="row"
+        :direction="isMobile ? 'col' : 'row'"
         :options="radioOptions"
         label="Type"
         v-model="type" />
-    </div>
+    </Teleport>
+
+    <div class="hidden lg:flex flex-row items-center flex-shrink-0" id="filter-header"/>
+
     <button class="block lg:hidden" @click="toggleShowFilters"><img src="@/assets/filter.svg" class="h-6"></button>
-    <div class="flex flex-col lg:hidden fixed top-0 h-screen w-[60vw] bg-gray-100 transition-all duration-500 z-40" :class="showFilters ? 'right-0' : '-right-[60vw]'">
-      <div class="flex flex-col mx-8">
-        <label for="year">Year</label>
-        <div class="flex flex-row items-center w-48">
-          <span>{{ years[0] }}</span>
-          <div class="w-48 flex-row items-center ml-2 mr-3">
-            <!-- apparently the first movie was made in 1888, I could fact check this beyond a quick google search, but... -->
 
-            <vue-slider v-model="years"
-                        id="year"
-                        class="w-48"
-                        tooltip="none"
-                        :min="1888"
-                        :max="2024"
-            />
-          </div>
-          <span>{{ years[1] }}</span>
+    <div class="flex flex-col lg:hidden fixed top-0 h-screen w-[60vw] bg-gray-100 transition-all duration-500 z-40 p-10" :class="showFilters ? 'right-0' : '-right-[60vw]'">
+      <h2 class="text-2xl text-black font-bold">Filters</h2>
+      <div id="filter-drawer"/>
+    </div>
+    <div class="absolute lg:hidden h-screen w-screen bg-gray-700/75 z-30 top-0 left-0" v-if="showFilters" @click="toggleShowFilters"/>
 
-        </div>
-      </div>
-      <RadioInput
-        direction="col"
-        :options="radioOptions"
-        label="Type"
-        v-model="type" />
-    </div>
-    <div class="absolute lg:hidden h-screen w-screen bg-gray-700/75 z-30 top-0 left-0" v-if="showFilters" @click="toggleShowFilters">
-    </div>
   </div>
 </template>
 
