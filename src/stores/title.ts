@@ -65,10 +65,18 @@ export const useTitleStore = defineStore('title', () => {
   async function search(filters: Filters) {
     searching.value = true
     const result = await fetch(`${baseUrl}&s=${filters.search}&type=${filters.type}`)
-    if (filters.page) {
-      pagination.value.currentPage = filters.page
-    }
+      .catch((error) => {
+        // capture error
+        alert("Something went wrong, please try again later")
+        searching.value = false
+        return
+      })
     const json = await result.json()
+    if (json.Error) {
+      alert("Something went wrong, please try again later")
+      searching.value = false
+      return
+    }
 
     pagination.value.total = json.totalResults
     pagination.value.currentPage = 1
@@ -86,7 +94,18 @@ export const useTitleStore = defineStore('title', () => {
     loadingNextPage.value = true
     ++pagination.value.currentPage
     const result = await fetch(`${baseUrl}&s=${pagination.value.currentFilters.search}&type=${pagination.value.currentFilters.type}&page=${pagination.value.currentPage}`)
+      .catch((error) => {
+        // capture error
+        alert("Something went wrong, please try again later")
+        loadingNextPage.value = false
+        return
+      })
     const json = await result.json()
+    if (json.Error) {
+      alert("Something went wrong, please try again later")
+      loadingNextPage.value = false
+      return
+    }
 
     titles.value.push(...transformOmdbResponse(json.Search))
 
@@ -98,7 +117,17 @@ export const useTitleStore = defineStore('title', () => {
       selectedTitle.value = fallbackData
     }
     const result = await fetch(`${baseUrl}&i=${id}`)
-    selectedTitle.value = await result.json()
+      .catch((error) => {
+        // capture error
+        alert("Something went wrong, please try again later")
+        return
+      })
+    const json = await result.json()
+    if (json.Error) {
+      alert("Something went wrong, please try again later")
+      return
+    }
+    selectedTitle.value = json
   }
 
   return { selectedTitle, pagination, hasFinishedPagination, titles, search, loadNextPage, fetchTitleById, filteredTitles, searching }
