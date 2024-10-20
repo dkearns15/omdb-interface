@@ -24,6 +24,10 @@ const allFilters = computed(() => {
 })
 
 function callSearch() {
+  // api will return 'too many results' when search term is not provided or is too short. Pretty disappointing if you really want to look up IT
+  if (!allFilters.value.search || allFilters.value.search.length < 3) {
+    return
+  }
   search(allFilters.value)
 }
 
