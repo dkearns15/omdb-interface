@@ -14,7 +14,7 @@ const { title } = defineProps<{ title: Title }>()
     <div class="flex flex-col pb-4">
       <div class="flex flex-row">
         <div>
-          <img v-if="title.Poster" :src="title.Poster" class="rounded-lg max-h-96 flex-shrink-0"/>
+          <img v-if="title.Poster" :src="title.Poster" class="rounded-lg max-h-96 flex-shrink-0" :alt="`${title.Title} poster`"/>
         </div>
         <div class="flex flex-col justify-between w-full pl-4">
           <div class="flex flex-row justify-end w-full">
@@ -22,13 +22,13 @@ const { title } = defineProps<{ title: Title }>()
               v-if="titleIsInWatchlist(title.imdbID)"
               class="border border-black rounded-md px-2"
               @click="() => { removeFromWatchlist(title.imdbID)}">
-              <div class="flex flex-row items-center">Watchlisted <img class="h-5 w-5" src="@/assets/checkmark.svg"></div>
+              <div class="flex flex-row items-center">Watchlisted <img class="h-5 w-5" src="@/assets/checkmark.svg" alt="Checkmark icon"></div>
             </button>
             <button
               v-else
               class="border border-black rounded-md px-2"
               @click="() => { addToWatchlist(title.imdbID)}">
-              <div class="flex flex-row items-center">Watchlist <img class="h-5 w-5" src="@/assets/bookmark.svg"></div>
+              <div class="flex flex-row items-center">Watchlist <img class="h-5 w-5" src="@/assets/bookmark.svg" alt="Bookmark icon"></div>
             </button>
           </div>
           <div class="flex flex-col w-full">

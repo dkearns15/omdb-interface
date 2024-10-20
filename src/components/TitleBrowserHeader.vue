@@ -58,10 +58,10 @@ const { isMobile } = useIsMobile()
 <template>
   <div class="bg-gray-400 w-full h-24 flex flex-row rounded-t-lg justify-between px-4">
     <div class="flex flex-row grow items-center">
-      <img src="@/assets/OMDB_Logo.png" class="my-4 mr-2 h-12 md:h-3/4" />
+      <img src="@/assets/OMDB_Logo.png" class="my-4 mr-2 h-12 md:h-3/4" alt="OMDB Logo" />
       <div class="flex flex-row grow items-center">
         <label for="search" class="mr-2 cursor-pointer">
-          <img src="@/assets/search.svg"/>
+          <img src="@/assets/search.svg" alt="Search icon"/>
         </label>
         <input
           v-model="searchModel"
@@ -103,7 +103,7 @@ const { isMobile } = useIsMobile()
 
     <div class="hidden lg:flex flex-row items-center flex-shrink-0" id="filter-header"/>
 
-    <button class="block lg:hidden" @click="toggleShowFilters"><img src="@/assets/filter.svg" class="h-6"></button>
+    <button class="block lg:hidden" @click="toggleShowFilters"><img src="@/assets/filter.svg" class="h-6" alt="Filter icon"></button>
 
     <div class="flex flex-col lg:hidden fixed top-0 h-screen w-[60vw] bg-gray-100 transition-all duration-500 z-40 p-10" :class="showFilters ? 'right-0' : '-right-[60vw]'">
       <h2 class="text-2xl text-black font-bold">Filters</h2>
