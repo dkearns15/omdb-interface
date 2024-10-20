@@ -2,7 +2,7 @@
 import { defineProps } from "vue";
 
 interface Option {
-  value: string,
+  value: string|null,
   label: string
 }
 const { options, label, direction = 'row' } = defineProps<{ options: Array<Option>, label: string, direction: string }>()

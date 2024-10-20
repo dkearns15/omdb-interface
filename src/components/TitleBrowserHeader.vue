@@ -27,9 +27,12 @@ function callSearch() {
   search(allFilters.value)
 }
 
-const debounce = (callback, wait) => {
-  let timeoutId = null;
-  return (...args) => {
+const debounce = (callback: Function, wait: number) => {
+  let timeoutId: null|number = null;
+  return (...args: any[]) => {
+    if (timeoutId === null) {
+      return
+    }
     window.clearTimeout(timeoutId);
     timeoutId = window.setTimeout(() => {
       callback(...args);
@@ -38,7 +41,6 @@ const debounce = (callback, wait) => {
 }
 
 watch(allFilters, debounce(callSearch, 300))
-
 
 onMounted(() => {
   init()

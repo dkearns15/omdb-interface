@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { defineProps } from 'vue';
-import Title from "@/types/title";
+import type Title from "@/types/title";
 import {useWatchlistStore} from "@/stores/watchlist";
 import {storeToRefs} from "pinia";
 const { titleIsInWatchlist } = storeToRefs(useWatchlistStore())

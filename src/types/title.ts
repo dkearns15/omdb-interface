@@ -3,6 +3,7 @@ export default interface Title {
   Title: string;
   StartYear: string;
   EndYear: string;
+  Year: string;
   Rated?: RatingType;
   Released?: string;
   Runtime?: string;
@@ -29,8 +30,8 @@ export default interface Title {
 }
 
 interface Rating {
-  source: string;
-  value: string;
+  Source: string;
+  Value: string;
 }
 
 type RatingType = 'PG' | 'TV-MA' | string;

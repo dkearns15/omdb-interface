@@ -4,7 +4,7 @@ import { defineStore } from 'pinia'
 export const useWatchlistStore = defineStore('watchlist', () => {
   const watchlist = ref<Array<string>>([])
 
-  const titleIsInWatchlist = computed((state) => (id: string) => {
+  const titleIsInWatchlist = computed(() => (id: string) => {
     return watchlist.value.findIndex((element) => element === id) !== -1
   })
 

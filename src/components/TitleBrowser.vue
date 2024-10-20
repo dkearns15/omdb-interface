@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import { onMounted } from "vue";
 import TitleDetails from "@/components/TitleDetails.vue";
 import { useTitleStore } from "@/stores/title";
 import TitleList from "@/components/TitleList.vue";
 import {storeToRefs} from "pinia";
 import TitleBrowserHeader from "@/components/TitleBrowserHeader.vue";
-const { titles, filteredTitles, selectedTitle } = storeToRefs(useTitleStore())
+const { filteredTitles, selectedTitle } = storeToRefs(useTitleStore())
 
 </script>
 <template>

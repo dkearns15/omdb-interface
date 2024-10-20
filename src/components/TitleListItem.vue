@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { defineProps } from 'vue';
-import Title from "@/types/title";
+import type Title from "@/types/title";
 import {useTitleStore} from "@/stores/title";
 const { fetchTitleById } = useTitleStore()
 

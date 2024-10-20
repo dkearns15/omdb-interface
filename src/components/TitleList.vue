@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {defineProps} from 'vue';
-import Title from "@/types/title";
+import type Title from "@/types/title";
 import TitleListItem from "@/components/TitleListItem.vue";
 import {useTitleStore} from "@/stores/title";
 import {storeToRefs} from "pinia";
