@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {defineProps, watch} from 'vue';
+import {defineProps} from 'vue';
 import Title from "@/types/title";
 import TitleListItem from "@/components/TitleListItem.vue";
 import {useTitleStore} from "@/stores/title";
@@ -9,44 +9,18 @@ const { loadNextPage } = useTitleStore()
 const { pagination, hasFinishedPagination, searching } = storeToRefs(useTitleStore())
 
 const { titles } = defineProps<{ titles: Array<Title> }>()
-
-function checkForLoadMore(event) {
-  const scrollContainer = event.target;
-
-  // Calculate if the user has scrolled to the bottom
-  const scrollBottom = scrollContainer.scrollTop + scrollContainer.clientHeight;
-  const scrollHeight = scrollContainer.scrollHeight;
-
-  if (hasFinishedPagination.value) {
-    return;
-  }
-
-  if (scrollBottom >= scrollHeight - 200) {
-    // If the bottom is reached, load more items
-    loadNextPage()
-  }
-}
-
-watch(titles.length, (oldValue, newValue) => {
-  console.log(oldValue, newValue)
-  if (oldValue < newValue) {
-    checkForLoadMore()
-  }
-})
-
 </script>
 
 <template>
   <div class="relative overflow-hidden h-full">
-    <ul v-if="titles && titles.length > 0" class="divide-y divide-gray-300 overflow-y-scroll h-full flex flex-col justify-start"
-        @scroll="checkForLoadMore"
-        @resize="checkForLoadMore">
+    <ul v-if="titles && titles.length > 0" class="divide-y divide-gray-300 overflow-y-scroll h-full flex flex-col justify-start">
       <li class="sticky top-0 bg-white px-4">
-        Showing 1 to {{ pagination.total < (pagination.perPage * pagination.currentPage) ? pagination.total : pagination.currentPage * pagination.perPage }} of {{ pagination.total }}
+        Loaded 1 to {{ pagination.total < (pagination.perPage * pagination.currentPage) ? pagination.total : pagination.currentPage * pagination.perPage }} of {{ pagination.total }}
+        <span><br/>Showing {{ titles.length }} titles</span>
       </li>
       <TitleListItem v-for="title in titles" :key="title.imdbID" :title="title"/>
       <li v-if="hasFinishedPagination" class="text-center px-4 bg-white pt-2">End of results</li>
-      <li v-else class="text-center px-4 bg-white pt-2"><span class="loader"></span></li>
+      <li v-else class="text-center px-4 bg-white py-2"><button @click="loadNextPage" class="underline">Load more results</button></li>
     </ul>
     <div v-else class="flex flex-row justify-center items-center overflow-y-scroll h-full w-full">
       No results

@@ -80,7 +80,17 @@ export const useTitleStore = defineStore('title', () => {
     const result = await fetch(`https://www.omdbapi.com/?apikey={apiKeyHere}&s=${pagination.value.currentFilters.search}&type=${pagination.value.currentFilters.type}&page=${++pagination.value.currentPage}`)
     const json = await result.json()
     pagination.value.total = json.totalResults
-    titles.value.push(...json.Search)
+    titles.value.push(...json.Search.map(element => {
+      if (element.Year.length === 4) {
+        element.StartYear = element.Year
+        element.EndYear = element.Year
+        return element
+      }
+      const years = element.Year.split('–')
+      element.StartYear = years[0]
+      element.EndYear = years.length > 1 ? years[1] : "3000" // handles ongoing series, sorry to the developer maintaining this in the year 3000
+      return element
+    }))
     loadingNextPage.value = false
   }
 

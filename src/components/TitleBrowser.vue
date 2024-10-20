@@ -17,7 +17,7 @@ const { titles, filteredTitles, selectedTitle } = storeToRefs(useTitleStore())
     </div>
     <div class="hidden col-span-3 md:flex flex-col justify-center items-center" v-else>
       <div class="max-w-80 text-center">
-        Search for your new favourite movie. Select a movie in the sidebar to view more details.
+        Search for your new favourite title. Select a title in the sidebar to view more details.
       </div>
     </div>
     <div class="block md:hidden fixed top-0 h-screen w-[80vw] bg-gray-100 transition-all duration-500 z-40" :class="selectedTitle ? 'right-0' : '-right-[80vw]'">
