@@ -64,6 +64,7 @@ export const useTitleStore = defineStore('title', () => {
 
   async function search(filters: Filters) {
     searching.value = true
+    filters.search = filters.search?.trim() ?? null
     const result = await fetch(`${baseUrl}&s=${filters.search}&type=${filters.type}`)
       .catch((error) => {
         // capture error
@@ -73,7 +74,6 @@ export const useTitleStore = defineStore('title', () => {
       })
     const json = await result.json()
     if (json.Error) {
-      alert("Something went wrong, please try again later")
       searching.value = false
       return
     }
@@ -102,7 +102,6 @@ export const useTitleStore = defineStore('title', () => {
       })
     const json = await result.json()
     if (json.Error) {
-      alert("Something went wrong, please try again later")
       loadingNextPage.value = false
       return
     }
@@ -124,7 +123,6 @@ export const useTitleStore = defineStore('title', () => {
       })
     const json = await result.json()
     if (json.Error) {
-      alert("Something went wrong, please try again later")
       return
     }
     selectedTitle.value = json

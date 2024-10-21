@@ -13,6 +13,8 @@ Built in Vue with Typescript, developed on Windows 11 on Node 18.13.0
 - Abstract the api calls with an interface to open up support for other apis
 - Tests...
 - Improved api call error handling
+  - Display error messages based on response from api
+  - Different status codes
 - Fancier UX, as well as hover states, loading states
 
 ## Project Setup
